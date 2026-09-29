@@ -1,15 +1,21 @@
 import axios from "axios";
 import { createContext, useState } from "react";
 import { baseUrl } from "../utils/baseUrl";
+import { getDecodedToken } from "../utils/auth";
 
 export let orderContext = createContext();
 
 async function getUserAllOrders() {
-  let userId = localStorage.getItem("userId");
-  if (!userId) return false;
+  // take the id from the signed token, not from a storage key the user can edit
+  let decoded = getDecodedToken();
+  if (!decoded?.id) return false;
 
   return axios
-    .get(`${baseUrl}/orders/user/${userId}`)
+    .get(`${baseUrl}/orders/user/${decoded.id}`, {
+      headers: {
+        token: localStorage.getItem("token"),
+      },
+    })
     .then((data) => data)
     .catch((err) => err);
 }
