@@ -5,38 +5,31 @@ import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { tokenContext } from "../../../Context/TokenContext";
 import { Helmet } from "react-helmet";
+import { baseUrl } from "../../../utils/baseUrl";
 
 export default function SignIn() {
   let { updateToken } = useContext(tokenContext);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showRePassword, setShowRePassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState(false);
-  const [isLodaing, setIsloading] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
 
   let navigate = useNavigate();
-  const SignupSchema = Yup.object({
+  // signing in only needs the credentials to be present, the format rules
+  // belong to sign up so older accounts are not locked out here
+  const SignInSchema = Yup.object({
     email: Yup.string()
       .email("Invalid email format")
       .required("Email is required"),
-    password: Yup.string()
-      .matches(
-        /^[A-Z][a-zA-Z0-9]{7,}$/,
-        "Password must start with an uppercase letter and be at least 8 characters long"
-      )
-      .required("Password is required"),
-    rePassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Passwords must match")
-      .required("Please confirm your password"),
+    password: Yup.string().required("Password is required"),
   });
 
   let formik = useFormik({
     initialValues: {
       email: "",
       password: "",
-      rePassword: "",
     },
-    validationSchema: SignupSchema,
+    validationSchema: SignInSchema,
     onSubmit: (values) => {
       login(values);
     },
@@ -45,7 +38,7 @@ export default function SignIn() {
   async function login(values) {
     setIsloading(true);
     axios
-      .post(`https://ecommerce.routemisr.com/api/v1/auth/signin`, values)
+      .post(`${baseUrl}/auth/signin`, values)
       .then((data) => {
         setIsloading(false);
         if (data.data.message === "success") {
@@ -58,7 +51,10 @@ export default function SignIn() {
       })
       .catch((error) => {
         setIsloading(false);
-        setErrorMsg(error.response.data.message);
+        // a network failure has no response body to read the message from
+        setErrorMsg(
+          error.response?.data?.message ?? "Something went wrong, try again"
+        );
       });
   }
 
@@ -127,40 +123,6 @@ export default function SignIn() {
                     </div>
                   ) : null}
                 </div>
-                <div className="mb-2">
-                  <label htmlFor="rePassword">Re-password:</label>
-                  <div className="position-relative">
-                    <input
-                      id="rePassword"
-                      name="rePassword"
-                      type={showRePassword ? "text" : "password"}
-                      className="form-control"
-                      value={formik.values.rePassword}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    />
-                    <button
-                      type="button"
-                      className="btn text-color border-0 position-absolute top-50 end-0 translate-middle-y"
-                      onClick={() => {
-                        setShowRePassword(!showRePassword);
-                      }}
-                    >
-                      <i
-                        className={`fa-regular ${
-                          showRePassword ? "fa-eye-slash text-main" : "fa-eye"
-                        }`}
-                      ></i>
-                    </button>
-                  </div>
-
-                  {formik.errors.rePassword && formik.touched.rePassword ? (
-                    <div className="alert alert-danger my-2">
-                      {formik.errors.rePassword}
-                    </div>
-                  ) : null}
-                </div>
-
                 <p className="mb-3 font-sm ">
                   Forgot your password?
                   <Link
@@ -177,7 +139,7 @@ export default function SignIn() {
                   </div>
                 ) : null}
 
-                {isLodaing ? (
+                {isLoading ? (
                   <button
                     type="submit"
                     className="btn bg-main text-white"
