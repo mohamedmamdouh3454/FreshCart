@@ -1,9 +1,10 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { baseUrl } from "../../../utils/baseUrl";
 
 export default function VerifyResetCode() {
   const [errorMsg, setErrorMsg] = useState(false);
@@ -25,25 +26,27 @@ export default function VerifyResetCode() {
     },
   });
 
+  // the message belongs to the values that were sent, drop it once they change
+  useEffect(() => {
+    setErrorMsg(false);
+  }, [formik.values]);
+
   async function verifyResetCode(values) {
     setIsloading(true);
+    setErrorMsg(false);
     axios
-      .post(
-        `https://ecommerce.routemisr.com/api/v1/auth/verifyResetCode`,
-        values
-      )
+      .post(`${baseUrl}/auth/verifyResetCode`, values)
       .then((data) => {
         setIsloading(false);
-        console.log(data);
-
         if (data.data.status === "Success") {
           navigate("/auth/reset-password");
         }
       })
       .catch((error) => {
         setIsloading(false);
-        console.log(error.response);
-        setErrorMsg(error.response.data.message);
+        setErrorMsg(
+          error.response?.data?.message ?? "Something went wrong, try again"
+        );
       });
   }
 

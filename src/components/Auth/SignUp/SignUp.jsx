@@ -1,9 +1,10 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Helmet } from "react-helmet";
+import { baseUrl } from "../../../utils/baseUrl";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -52,10 +53,16 @@ export default function SignUp() {
     },
   });
 
+  // the message belongs to the values that were sent, drop it once they change
+  useEffect(() => {
+    setErrorMsg(false);
+  }, [formik.values]);
+
   async function register(values) {
     setIsloading(true);
+    setErrorMsg(false);
     axios
-      .post(`https://ecommerce.routemisr.com/api/v1/auth/signup`, values)
+      .post(`${baseUrl}/auth/signup`, values)
       .then((data) => {
         setIsloading(false);
         if (data.data.message === "success") {
@@ -64,7 +71,9 @@ export default function SignUp() {
       })
       .catch((error) => {
         setIsloading(false);
-        setErrorMsg(error.response.data.message);
+        setErrorMsg(
+          error.response?.data?.message ?? "Something went wrong, try again"
+        );
       });
   }
 

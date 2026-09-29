@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,8 +35,14 @@ export default function SignIn() {
     },
   });
 
+  // the message belongs to the values that were sent, drop it once they change
+  useEffect(() => {
+    setErrorMsg(false);
+  }, [formik.values]);
+
   async function login(values) {
     setIsloading(true);
+    setErrorMsg(false);
     axios
       .post(`${baseUrl}/auth/signin`, values)
       .then((data) => {
