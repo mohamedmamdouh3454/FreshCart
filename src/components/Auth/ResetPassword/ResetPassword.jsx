@@ -1,16 +1,14 @@
 import { useFormik } from "formik";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { tokenContext } from "../../../Context/TokenContext";
 
 export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState(false);
   const [isLodaing, setIsloading] = useState(false);
-  let { updateToken } = useContext(tokenContext);
 
   let navigate = useNavigate();
 

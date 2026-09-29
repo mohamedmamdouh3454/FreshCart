@@ -3,7 +3,6 @@ import MainSlider from "../MainSlider/MainSlider";
 import CategoriesSlider from "../CategoriesSlider/CategoriesSlider";
 import Products from "./../Products/Products";
 import { Helmet } from "react-helmet";
-import ProductsSlider from "../ProductsSlider/ProductsSlider";
 export default function HomePage() {
   return (
     <>
