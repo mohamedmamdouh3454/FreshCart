@@ -1,20 +1,21 @@
-import { jwtDecode } from "jwt-decode";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { tokenContext } from "../Context/TokenContext";
+import { clearAuthStorage, getDecodedToken } from "../utils/auth";
 
 export default function ProtectedRoutes({ children }) {
   let { setToken } = useContext(tokenContext);
-  let token = localStorage.getItem("token");
+  // covers a missing, malformed or expired token
+  let isAuthenticated = Boolean(getDecodedToken());
 
-  if (!token) return <Navigate to="/auth/signin" />;
+  useEffect(() => {
+    if (!isAuthenticated) {
+      clearAuthStorage();
+      setToken(null);
+    }
+  }, [isAuthenticated, setToken]);
 
-  try {
-    const decoded = jwtDecode(token);
-    if (decoded) return children;
-  } catch (err) {
-    localStorage.clear();
-    setToken(null);
-    return <Navigate to="/auth/signin" />;
-  }
+  if (!isAuthenticated) return <Navigate to="/auth/signin" />;
+
+  return children;
 }
