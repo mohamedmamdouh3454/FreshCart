@@ -5,6 +5,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { tokenContext } from "../../Context/TokenContext";
 import { cartContext } from "../../Context/CartContext";
 import { wishlistContext } from "../../Context/WishlistContext";
+import { clearAuthStorage } from "../../utils/auth";
 export default function Navbar() {
   const [navToggle, setNavToggle] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -33,7 +34,7 @@ export default function Navbar() {
   };
 
   function logOut() {
-    localStorage.clear();
+    clearAuthStorage();
     setToken(null);
     navigate("/auth/signin");
   }
