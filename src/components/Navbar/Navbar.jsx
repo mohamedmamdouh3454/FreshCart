@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import logo from "../../assets/images/logo.svg";
 import "./Navbar.css";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { tokenContext } from "../../Context/TokenContext";
 import { cartContext } from "../../Context/CartContext";
 import { wishlistContext } from "../../Context/WishlistContext";
@@ -20,6 +20,8 @@ export default function Navbar() {
   } = useContext(wishlistContext);
 
   let navigate = useNavigate();
+  // the auth pages already offer both actions, no need to repeat them up here
+  let isAuthPage = useLocation().pathname.startsWith("/auth");
 
   function handleNavToggle() {
     setNavToggle(!navToggle);
@@ -214,7 +216,7 @@ export default function Navbar() {
                   </ul>
                 </li>
               </>
-            ) : (
+            ) : isAuthPage ? null : (
               <>
                 <li className="nav-item">
                   <NavLink

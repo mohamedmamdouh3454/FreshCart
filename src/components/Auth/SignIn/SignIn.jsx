@@ -129,7 +129,7 @@ export default function SignIn() {
                     to="/auth/forgot-password"
                     className="text-main ms-1 fw-bold "
                   >
-                    Reset it here
+                    Reset password
                   </Link>
                 </p>
 
@@ -158,13 +158,13 @@ export default function SignIn() {
                     className="btn bg-main text-white"
                     disabled={!(formik.dirty && formik.isValid)}
                   >
-                    login
+                    Log in
                   </button>
                 )}
                 <p className=" my-4 text-center">
                   Don't have an account yet?
                   <Link to="/auth/signup" className="text-main ms-1 fw-bold">
-                    Signup
+                    Register
                   </Link>
                 </p>
               </form>

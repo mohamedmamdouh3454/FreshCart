@@ -185,7 +185,7 @@ export default function Footer() {
         <section>
           <div className="container">
             <div className="text-center p-3">
-              © 2024 Copyright
+              © {new Date().getFullYear()} Copyright
               <Link className="fw-semibold mx-1 text-main" to="/home">
                 FrechCart
               </Link>
