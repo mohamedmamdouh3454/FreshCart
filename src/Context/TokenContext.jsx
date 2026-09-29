@@ -8,12 +8,18 @@ export default function TokenContextProvider({ children }) {
   const [userData, setUserData] = useState(null);
 
   const updateToken = (newToken) => {
-    if (newToken) {
-      setToken(newToken);
+    if (!newToken) return;
+
+    setToken(newToken);
+
+    try {
       const { id, name } = jwtDecode(newToken);
       setUserData({ id, name });
       localStorage.setItem("userName", name);
       localStorage.setItem("userId", id);
+    } catch (err) {
+      // a malformed token must not bring down the whole provider
+      setUserData(null);
     }
   };
 
